@@ -1,0 +1,41 @@
+name: CI/CD
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Build using Maven (clean install)
+        run: mvn -B -ntp clean install
+
+      - name: Run tests
+        run: mvn -B -ntp test
+
+      - name: Package application (JAR)
+        run: mvn -B -ntp package
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-jar
+          path: target/*.jar
+
+      - name: Simulate deployment
+        run: echo "Application Deployed Successfully!"
+
