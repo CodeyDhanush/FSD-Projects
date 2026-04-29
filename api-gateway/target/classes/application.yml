@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: student-service-route
+          # Use lb:// prefix to enable Spring Cloud LoadBalancer
+          uri: lb://STUDENT-SERVICE
+          predicates:
+            - Path=/students/**
+    # Configure Simple Discovery Client to hardcode service instances
+    # This replaces the need for a service registry like Eureka for this demo
+    discovery:
+      client:
+        simple:
+          instances:
+            STUDENT-SERVICE:
+              - uri: http://localhost:8081
+              - uri: http://localhost:8082
